@@ -55,7 +55,7 @@ export default {
     return {
       site: {
         menu: [],
-        title: '나의 타이틀입니다',
+        title: '정신차렷!',
         footer: 'footer입니다'
       },
       right: null,
@@ -71,6 +71,7 @@ export default {
         const v = sn.val()
         if (!v) {
           this.$firebase.database().ref().child('site').set(this.site)
+          return
         }
         this.site = v
       }, (e) => {
