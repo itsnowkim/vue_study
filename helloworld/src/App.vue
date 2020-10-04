@@ -11,6 +11,12 @@
         <v-btn icon to="/about">
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
+        <v-btn icon @click="save">
+          <v-icon>mdi-check</v-icon>
+        </v-btn>
+        <v-btn icon @click="read">
+          <v-icon>mdi-numeric</v-icon>
+        </v-btn>
 
     </v-app-bar>
     <v-navigation-drawer app v-model="drawer">
@@ -50,6 +56,25 @@ export default {
       right: null,
       drawer: false
     }
+  },
+  mounted () {
+    console.log(this.$firebase)
+  },
+  methods: {
+    save () {
+      console.log('save@@@')
+      this.$firebase.database().ref().child('abcd').set({
+        title: 'abcd', text: 'ttttt'
+      })
+    },
+    read () {
+      this.$firebase.database().ref().child('abcd').on('value', (sn) => {
+        console.log(sn)
+        console.log(sn.val())
+      })
+    }
+    // read는 변화에 계속 감지하는 리스너.
+    // 한번만 read할 필요가 생기면 const로 변수에 넣어서 그 변수를 다루는 방식으로. async
   }
 }
 </script>
