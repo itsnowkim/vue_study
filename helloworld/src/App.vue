@@ -6,7 +6,7 @@
       dark
     >
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <site-title :title="title"></site-title>
+      <site-title :title="site.title"></site-title>
       <v-spacer></v-spacer>
         <v-btn icon to="/about">
           <v-icon>mdi-magnify</v-icon>
@@ -19,6 +19,7 @@
         </v-btn>
 
     </v-app-bar>
+
     <v-navigation-drawer app v-model="drawer">
       <v-list-item>
         <v-list-item-content>
@@ -32,12 +33,13 @@
       </v-list-item>
 
       <v-divider></v-divider>
-      <site-menu></site-menu>
+      <site-menu :items="site.menu"></site-menu>
     </v-navigation-drawer>
-    <v-content>
+
+    <v-main>
       <router-view></router-view>
-    </v-content>
-    <site-footer :footer="footer"></site-footer>
+    </v-main>
+    <site-footer :footer="site.footer"></site-footer>
   </v-app>
 </template>
 
@@ -51,18 +53,31 @@ export default {
   name: 'App',
   data () {
     return {
-      title: '나의 타이틀입니다',
-      footer: 'footer입니다',
+      site: {
+        menu: [],
+        title: '나의 타이틀입니다',
+        footer: 'footer입니다'
+      },
       right: null,
       drawer: false
     }
   },
-  mounted () {
-    console.log(this.$firebase)
+  created () {
+    this.subscribe()
   },
   methods: {
+    subscribe () {
+      this.$firebase.database().ref().child('site').on('value', (sn) => {
+        const v = sn.val()
+        if (!v) {
+          this.$firebase.database().ref().child('site').set(this.site)
+        }
+        this.site = v
+      }, (e) => {
+        console.log(e.message)
+      })
+    },
     save () {
-      console.log('save@@@')
       this.$firebase.database().ref().child('abcd').set({
         title: 'abcd', text: 'ttttt'
       })
